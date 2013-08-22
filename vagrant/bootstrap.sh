@@ -75,7 +75,15 @@ chown -R vagrant:vagrant /home/vagrant/kitsune-redis
 npm install -g less
 
 # convenience
-echo "alias t=\"./manage.py test -s --noinput --logging-clear-handlers --with-id\"" >> /home/vagrant/.bashrc
+echo "alias start_redis=\"/kitsune/vagrant/start_redis.sh\"\n" >> /home/vagrant/.bashrc
+echo "alias server=\"./manage.py runserver 0.0.0.0:8000\"\n" >> /home/vagrant/.bashrc
+echo "alias t=\"./manage.py test -s --noinput --logging-clear-handlers --with-id\"\n" >> /home/vagrant/.bashrc
 echo "cd /kitsune" >> /home/vagrant/.bashrc
+
+mkdir -p /home/vagrant/redis
+mkdir -p /home/vagrant/redis/sumo-persistent
+mkdir -p /home/vagrant/redis/sumo-test
+mkdir -p /home/vagrant/redis/sumo
+chown -R vagrant:vagrant /home/vagrant/redis
 
 touch /home/vagrant/installed
