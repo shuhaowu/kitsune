@@ -63,7 +63,7 @@ rm /kitsune/build -rf
 mysqladmin -u root password helloworld
 echo "CREATE DATABASE kitsune; GRANT ALL ON kitsune.* TO kitsune@localhost IDENTIFIED BY 'kitsune'" | mysql -u root --password=helloworld
 mysql -u kitsune --password=kitsune kitsune < /kitsune/scripts/schema.sql
-/kitsune/vendor/src/schematic/schematic /kitsune/migrations/
+./manage.py migrate
 
 # redis stuff
 mkdir -p /home/vagrant/kitsune-redis/sumo
