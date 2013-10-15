@@ -36,8 +36,6 @@ update-alternatives --set python /usr/bin/python2.6
 
 python --version
 
-sudo update-locale LANG=en_US.UTF-8
-
 # setup node
 ln -sf /usr/bin/nodejs /usr/bin/node
 
@@ -73,6 +71,10 @@ chown -R vagrant:vagrant /home/vagrant/kitsune-redis
 
 # install less
 npm install -g less
+
+# Fix locale issue
+echo "export LANG=en_US.UTF-8" >> /home/vagrant/.bashrc
+echo "export LC_ALL=en_US.UTF-8" >> /home/vagrant/.bashrc
 
 # convenience
 echo "alias t=\"./manage.py test -s --noinput --logging-clear-handlers --with-id\"" >> /home/vagrant/.bashrc
