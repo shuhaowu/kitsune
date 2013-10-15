@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+# Adjust these according to your setup!
+REDISBIN=/usr/bin/redis-server
+CONFFILE=/kitsune/configs/redis/vagrant
+
+if test ! -e /home/vagrant/redis/sumo/
+then
+    echo "creating /home/vagrant/redis/sumo/"
+    mkdir -p /home/vagrant/redis/sumo/
+fi
+
+if test ! -e /home/vagrant/redis/sumo-test/
+then
+    echo "creating /home/vagrant/redis/sumo-test/"
+    mkdir -p /home/vagrant/redis/sumo-test/
+fi
+
+if test ! -e /home/vagrant/redis/sumo-persistent/
+then
+    echo "creating /home/vagrant/redis/sumo-persistent/"
+    mkdir -p /home/vagrant/redis/sumo-persistent/
+fi
+
+$REDISBIN $CONFFILE/redis-persistent.conf
+$REDISBIN $CONFFILE/redis-test.conf
+$REDISBIN $CONFFILE/redis-volatile.conf

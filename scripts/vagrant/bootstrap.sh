@@ -19,8 +19,8 @@ apt-get update
 export DEBIAN_FRONTEND=noninteractive
 apt-get install -y python2.6 python2.6-dev mysql-client-5.5 mysql-server-5.5 memcached libmysqlclient-dev curl openjdk-7-jre-headless build-essential
 apt-get install -y libxml2 libxml2-dev libxslt1.1 libxslt1-dev libjpeg8-dev zlib1g zlib1g-dev
-apt-get install -y nodejs tmux redis-server pv vim
-apt-get dist-upgrade -y
+apt-get install -y nodejs tmux redis-server pv vim unzip
+# apt-get dist-upgrade -y
 
 # fix problems so PIL can compile
 ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
@@ -36,7 +36,7 @@ update-alternatives --set python /usr/bin/python2.6
 
 python --version
 
-sudo update-locale LANG=en_US.UTF-8 LC_ALL=en-US.UTF-8
+sudo update-locale LANG=en_US.UTF-8
 
 # setup node
 ln -sf /usr/bin/nodejs /usr/bin/node
@@ -44,13 +44,15 @@ ln -sf /usr/bin/nodejs /usr/bin/node
 cd /tmp
 
 # install elastic search
-curl -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.3.deb
+curl -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.20.5.deb
 dpkg -i elasticsearch*.deb
 rm elasticsearch*.deb
 
 # install pip
-curl -O http://python-distribute.org/distribute_setup.py
-python distribute_setup.py
+wget https://pypi.python.org/packages/source/d/distribute/distribute-0.7.3.zip
+unzip distribute-0.7.3.zip
+cd distribute-0.7.3
+python setup.py install
 easy_install pip
 
 pip install virtualenv
@@ -62,8 +64,6 @@ rm /kitsune/build -rf
 
 mysqladmin -u root password helloworld
 echo "CREATE DATABASE kitsune; GRANT ALL ON kitsune.* TO kitsune@localhost IDENTIFIED BY 'kitsune'" | mysql -u root --password=helloworld
-mysql -u kitsune --password=kitsune kitsune < /kitsune/scripts/schema.sql
-./manage.py migrate
 
 # redis stuff
 mkdir -p /home/vagrant/kitsune-redis/sumo
@@ -75,15 +75,15 @@ chown -R vagrant:vagrant /home/vagrant/kitsune-redis
 npm install -g less
 
 # convenience
-echo "alias start_redis=\"/kitsune/vagrant/start_redis.sh\"\n" >> /home/vagrant/.bashrc
-echo "alias server=\"./manage.py runserver 0.0.0.0:8000\"\n" >> /home/vagrant/.bashrc
-echo "alias t=\"./manage.py test -s --noinput --logging-clear-handlers --with-id\"\n" >> /home/vagrant/.bashrc
+echo "alias t=\"./manage.py test -s --noinput --logging-clear-handlers --with-id\"" >> /home/vagrant/.bashrc
 echo "cd /kitsune" >> /home/vagrant/.bashrc
-
-mkdir -p /home/vagrant/redis
-mkdir -p /home/vagrant/redis/sumo-persistent
-mkdir -p /home/vagrant/redis/sumo-test
-mkdir -p /home/vagrant/redis/sumo
-chown -R vagrant:vagrant /home/vagrant/redis
+echo "bash /kitsune/scripts/vagrant/start_redis" >> /home/vagrant/.bashrc
 
 touch /home/vagrant/installed
+
+cd /kitsune
+./scripts/vagrant/start_redis
+echo "Running unittests.. please wait"
+./manage.py test -s --noinput --logging-clear-handlers --with-id
+
+echo "Please run ./manage.py syncdb --migrate for a new database!"
